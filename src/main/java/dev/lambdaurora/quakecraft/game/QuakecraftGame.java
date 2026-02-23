@@ -27,11 +27,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.ItemCooldownManager;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
-import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -52,7 +50,6 @@ import xyz.nucleoid.plasmid.api.game.common.GlobalWidgets;
 import xyz.nucleoid.plasmid.api.game.common.team.GameTeam;
 import xyz.nucleoid.plasmid.api.game.event.GameActivityEvents;
 import xyz.nucleoid.plasmid.api.game.event.GamePlayerEvents;
-import xyz.nucleoid.plasmid.api.game.player.JoinIntent;
 import xyz.nucleoid.plasmid.api.game.player.JoinOffer;
 import xyz.nucleoid.plasmid.api.game.rule.GameRuleType;
 import xyz.nucleoid.stimuli.event.EventResult;
@@ -81,7 +78,7 @@ public class QuakecraftGame extends QuakecraftLogic {
 	private int time;
 	private int endTime = 10 * 20;
 
-	private Set<QuakecraftPlayer> winners = new HashSet<>();
+	private final Set<QuakecraftPlayer> winners = new HashSet<>();
 
 	private QuakecraftGame(QuakecraftConfig config, GameActivity game, ServerWorld world, QuakecraftMap map, QuakecraftSpawnLogic spawnLogic) {
 		super(game.getGameSpace(), world, config, map);
@@ -249,7 +246,7 @@ public class QuakecraftGame extends QuakecraftLogic {
 				if (attacker instanceof ServerPlayerEntity playerAttacker && attacker != player) {
 					player.setAttacker(playerAttacker);
 					playerAttacker.setAttacking(player, 200);
-					player.kill(player.getWorld());
+					player.kill(player.getEntityWorld());
 				}
 				return EventResult.DENY;
 			}
@@ -262,7 +259,7 @@ public class QuakecraftGame extends QuakecraftLogic {
 		if (attacker != null) {
 			QuakecraftPlayer other = this.participants.get(attacker.getUuid());
 			if (other != null) {
-				((ServerPlayerEntity) attacker).playSoundToPlayer(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), SoundCategory.MASTER, 2.f, 5.f);
+				attacker.playSound(SoundEvents.BLOCK_NOTE_BLOCK_PLING.comp_349(), 2.f, 5.f);
 				other.incrementKills();
 				this.getSpace().getPlayers().sendMessage(
 						Text.translatable("quakecraft.game.kill", attacker.getDisplayName(), player.getDisplayName()).formatted(Formatting.GRAY)
@@ -281,7 +278,7 @@ public class QuakecraftGame extends QuakecraftLogic {
 	}
 
 	private void onSwingHand(ServerPlayerEntity player, Hand hand) {
-		if (Thread.currentThread() != player.getServer().getThread())
+		if (Thread.currentThread() != player.getEntityWorld().getServer().getThread())
 			return;
 
 		if (hand == Hand.OFF_HAND) {

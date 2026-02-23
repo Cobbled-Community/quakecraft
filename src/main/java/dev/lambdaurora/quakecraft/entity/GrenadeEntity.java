@@ -25,14 +25,11 @@ import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.EulerAngle;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.explosion.Explosion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,10 +71,10 @@ public class GrenadeEntity extends ArmorStandEntity implements CritableEntity {
 	}
 
 	public @Nullable Entity getOwner() {
-		if (this.ownerUuid != null && this.getWorld() instanceof ServerWorld) {
-			return ((ServerWorld) this.getWorld()).getEntity(this.ownerUuid);
+		if (this.ownerUuid != null && this.getEntityWorld() instanceof ServerWorld) {
+			return this.getEntityWorld().getEntity(this.ownerUuid);
 		} else {
-			return this.ownerEntityId != 0 ? this.getWorld().getEntityById(this.ownerEntityId) : null;
+			return this.ownerEntityId != 0 ? this.getEntityWorld().getEntityById(this.ownerEntityId) : null;
 		}
 	}
 
@@ -126,21 +123,21 @@ public class GrenadeEntity extends ArmorStandEntity implements CritableEntity {
 
 		this.life++;
 		if (this.life >= this.lifetime) {
-			this.detonate((ServerWorld) this.getWorld());
+			this.detonate((ServerWorld) this.getEntityWorld());
 			return;
 		} else {
 			this.updateWaterState();
 		}
 
 		if (this.isCritical()) {
-			CritableEntity.spawnCritParticles(this.getWorld(), this.getX(), this.getY(), this.getZ(), this.getVelocity());
+			CritableEntity.spawnCritParticles(this.getEntityWorld(), this.getX(), this.getY(), this.getZ(), this.getVelocity());
 		}
 
 		if (!this.leftOwner) {
 			this.leftOwner = this.checkOwnerLeft();
 		}
 
-		var hitResult = ProjectileUtil.getEntityCollision(this.getWorld(), this, this.getPos(), this.getPos().add(this.getVelocity()),
+		var hitResult = ProjectileUtil.getEntityCollision(this.getEntityWorld(), this, this.getEntityPos(), this.getEntityPos().add(this.getVelocity()),
 				this.getBoundingBox().stretch(this.getVelocity()).expand(1.0D), entity -> {
 					if (!entity.isSpectator() && entity.isAlive() && entity.canHit()) {
 						Entity entity2 = this.getOwner();
@@ -150,14 +147,14 @@ public class GrenadeEntity extends ArmorStandEntity implements CritableEntity {
 					}
 				}, ProjectileUtil.getToleranceMargin(this));
 		if (hitResult != null) {
-			this.onEntityHit(hitResult);
+			this.onEntityHit();
 		}
 	}
 
 	private boolean checkOwnerLeft() {
 		var owner = this.getOwner();
 		if (owner != null) {
-			for (var other : this.getWorld().getOtherEntities(this, this.getBoundingBox().stretch(this.getVelocity()).expand(1.0D),
+			for (var other : this.getEntityWorld().getOtherEntities(this, this.getBoundingBox().stretch(this.getVelocity()).expand(1.0D),
 					other -> !other.isSpectator() && other.canHit())) {
 				if (other.getRootVehicle() == owner.getRootVehicle()) {
 					return false;
@@ -168,8 +165,8 @@ public class GrenadeEntity extends ArmorStandEntity implements CritableEntity {
 		return true;
 	}
 
-	protected void onEntityHit(@NotNull EntityHitResult hitResult) {
-		this.detonate((ServerWorld) this.getWorld());
+	protected void onEntityHit() {
+		this.detonate((ServerWorld) this.getEntityWorld());
 	}
 
 	@Override

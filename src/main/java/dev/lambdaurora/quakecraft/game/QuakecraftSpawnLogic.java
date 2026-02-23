@@ -65,7 +65,7 @@ public class QuakecraftSpawnLogic {
 			var currentSpawn = this.map.getSpawn(i);
 
 			var box = Box.enclosing(currentSpawn.pos().add(-16, -5, -16), currentSpawn.pos().add(16, 5, 16));
-			int playersNearSpawn = (int) this.space.getPlayers().stream().filter(p -> box.contains(p.getPos())).count();
+			int playersNearSpawn = (int) this.space.getPlayers().stream().filter(p -> box.contains(p.getEntityPos())).count();
 			if (playersNearSpawn < lowestPlayers) {
 				lowestPlayers = playersNearSpawn;
 				spawn = currentSpawn;
@@ -120,7 +120,7 @@ public class QuakecraftSpawnLogic {
 	 */
 	public class SpawnCache {
 		private final int size;
-		private int[] lastSpawns;
+		private final int[] lastSpawns;
 
 		public SpawnCache(int size) {
 			this.size = size;

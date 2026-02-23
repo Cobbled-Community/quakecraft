@@ -52,7 +52,7 @@ public class RocketEntity extends FireballEntity implements CritableEntity {
 		super.tick();
 
 		if (this.isCritical()) {
-			CritableEntity.spawnCritParticles(this.getWorld(), this.getX(), this.getY(), this.getZ(), this.getVelocity());
+			CritableEntity.spawnCritParticles(this.getEntityWorld(), this.getX(), this.getY(), this.getZ(), this.getVelocity());
 		}
 	}
 
@@ -70,15 +70,15 @@ public class RocketEntity extends FireballEntity implements CritableEntity {
 	protected void onCollision(HitResult hitResult) {
 		if (hitResult.getType() == HitResult.Type.ENTITY) {
 			if (((EntityHitResult) hitResult).getEntity() instanceof RocketEntity) {
-				((EntityHitResult) hitResult).getEntity().kill((ServerWorld) this.getWorld());
-				this.detonate((ServerWorld) this.getWorld());
+				((EntityHitResult) hitResult).getEntity().kill((ServerWorld) this.getEntityWorld());
+				this.detonate((ServerWorld) this.getEntityWorld());
 				return;
 			}
 
 			this.onEntityHit((EntityHitResult) hitResult);
 		}
 
-		this.detonate((ServerWorld) this.getWorld());
+		this.detonate((ServerWorld) this.getEntityWorld());
 	}
 
 	@Override
@@ -87,7 +87,7 @@ public class RocketEntity extends FireballEntity implements CritableEntity {
 	}
 
 	@Override
-	public boolean damage(ServerWorld world, DamageSource source, float amount) {;
+	public boolean damage(ServerWorld world, DamageSource source, float amount) {
 		if (source.isIn(DamageTypeTags.IS_EXPLOSION))
 			return false;
 		this.detonate(world);

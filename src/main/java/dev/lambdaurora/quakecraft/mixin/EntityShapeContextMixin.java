@@ -28,15 +28,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.function.Predicate;
-
 @Mixin(EntityShapeContext.class)
 public class EntityShapeContextMixin implements UsefulEntityShapeContext {
 	@Unique
 	private Entity quakecraft$entity;
 
-	@Inject(method = "<init>(ZZDLnet/minecraft/item/ItemStack;Ljava/util/function/Predicate;Lnet/minecraft/entity/Entity;)V", at = @At("RETURN"))
-	private void onInit(boolean descending, boolean placement, double minY, ItemStack heldItem, Predicate walkOnFluidPredicate, Entity entity, CallbackInfo ci) {
+	@Inject(method = "<init>(ZZDLnet/minecraft/item/ItemStack;ZLnet/minecraft/entity/Entity;)V", at = @At("RETURN"))
+	private void onInit(boolean bl, boolean bl2, double d, ItemStack itemStack, boolean bl3, Entity entity, CallbackInfo ci) {
 		this.quakecraft$entity = entity;
 	}
 

@@ -20,7 +20,6 @@ package dev.lambdaurora.quakecraft.block;
 import dev.lambdaurora.quakecraft.Quakecraft;
 import dev.lambdaurora.quakecraft.QuakecraftRegistry;
 import eu.pb4.polymer.core.api.block.PolymerBlock;
-import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCollisionHandler;
@@ -35,7 +34,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.registry.Registry;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -71,7 +69,7 @@ public class LaunchPadBlock extends Block implements PolymerBlock {
 	}
 
 	@Override
-	protected void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity, EntityCollisionHandler handler) {
+	protected void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity, EntityCollisionHandler handler, boolean bl) {
 		if (world.isClient())
 			return;
 		var direction = state.get(Properties.HORIZONTAL_FACING);

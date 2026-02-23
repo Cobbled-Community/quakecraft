@@ -24,7 +24,6 @@ import dev.lambdaurora.quakecraft.weapon.Weapons;
 import dev.lambdaurora.quakecraft.weapon.inventory.WeaponManager;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
@@ -60,7 +59,7 @@ public class QuakecraftPlayer implements Comparable<QuakecraftPlayer> {
 	private boolean left = false;
 
 	public QuakecraftPlayer(ServerPlayerEntity player, GameTeam team) {
-		this.world = player.getWorld();
+		this.world = player.getEntityWorld();
 		this.uuid = player.getUuid();
 		this.name = player.getNameForScoreboard();
 		this.weapons.add(Weapons.ADVANCED_SHOOTER);

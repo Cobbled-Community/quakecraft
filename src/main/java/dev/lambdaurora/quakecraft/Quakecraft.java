@@ -30,8 +30,6 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
@@ -120,7 +118,7 @@ public class Quakecraft implements ModInitializer {
 	public static void applySpeed(ServerPlayerEntity player) {
 		var movementSpeedAttribute = player.getAttributes().getCustomInstance(EntityAttributes.MOVEMENT_SPEED);
 		if (movementSpeedAttribute != null) {
-			movementSpeedAttribute.removeModifier(QuakecraftConstants.PLAYER_MOVEMENT_SPEED_MODIFIER.id());
+			movementSpeedAttribute.removeModifier(QuakecraftConstants.PLAYER_MOVEMENT_SPEED_MODIFIER);
 			movementSpeedAttribute.addTemporaryModifier(QuakecraftConstants.PLAYER_MOVEMENT_SPEED_MODIFIER);
 		}
 	}
@@ -134,7 +132,7 @@ public class Quakecraft implements ModInitializer {
 	public static void removeSpeed(ServerPlayerEntity player) {
 		var movementSpeedAttribute = player.getAttributes().getCustomInstance(EntityAttributes.MOVEMENT_SPEED);
 		if (movementSpeedAttribute != null) {
-			movementSpeedAttribute.removeModifier(QuakecraftConstants.PLAYER_MOVEMENT_SPEED_MODIFIER.id());
+			movementSpeedAttribute.removeModifier(QuakecraftConstants.PLAYER_MOVEMENT_SPEED_MODIFIER);
 		}
 	}
 

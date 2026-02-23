@@ -24,7 +24,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -71,7 +70,7 @@ public class ShooterWeapon extends Weapon {
 		));
 		player.networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(player));
 
-		player.playSoundToPlayer(SoundEvents.ENTITY_BAT_TAKEOFF, SoundCategory.MASTER, 1.0F, 0.5F);
+		player.playSound(SoundEvents.ENTITY_BAT_TAKEOFF, 1.0F, 0.5F);
 		return super.onSecondary(world, player, stack);
 	}
 }

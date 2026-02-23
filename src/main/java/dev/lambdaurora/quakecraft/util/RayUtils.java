@@ -29,7 +29,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -58,7 +57,7 @@ public final class RayUtils {
 	 * @return the absolute distance between the source and the most far hit. The sign bit is used as a boolean to represent a success or not
 	 */
 	public static double raycastEntities(Entity source, double range, double margin, Predicate<Entity> predicate, Consumer<Entity> consumer) {
-		World world = source.getWorld();
+		World world = source.getEntityWorld();
 
 		final Vec3d origin = source.getCameraPosVec(1.0F);
 		final Vec3d delta = source.getRotationVec(1.0F).multiply(range);
@@ -114,7 +113,7 @@ public final class RayUtils {
 	 * Thanks FarmyFeud (https://github.com/NucleoidMC/farmy-feud/blob/1.16.2/src/main/java/xyz/nucleoid/farmyfeud/game/active/EntityRayTrace.java)
 	 */
 	public static @Nullable EntityHitResult raycastEntity(Entity source, double range, double margin, Predicate<Entity> predicate) {
-		World world = source.getWorld();
+		World world = source.getEntityWorld();
 
 		Vec3d origin = source.getCameraPosVec(1.0F);
 		Vec3d delta = source.getRotationVec(1.0F).multiply(range);
