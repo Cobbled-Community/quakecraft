@@ -17,11 +17,11 @@
 
 package dev.lambdaurora.quakecraft.util;
 
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Makes the {@link net.minecraft.block.EntityShapeContext} actually useful by providing the entity.
+ * Makes the {@link net.minecraft.world.phys.shapes.EntityCollisionContext} actually useful by providing the entity.
  * <p>
  * Why? Because I need the entity to set the correct
  */

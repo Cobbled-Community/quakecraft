@@ -23,17 +23,17 @@ import dev.lambdaurora.quakecraft.game.QuakecraftWaiting;
 import dev.lambdaurora.quakecraft.mixin.FireworkRocketEntityAccessor;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.FireworkExplosionComponent;
-import net.minecraft.component.type.FireworksComponent;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.projectile.FireworkRocketEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Direction;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.FireworkExplosion;
+import net.minecraft.world.item.component.Fireworks;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.projectile.FireworkRocketEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.resources.Identifier;
+import net.minecraft.core.Direction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +56,7 @@ public class Quakecraft implements ModInitializer {
 	private static Quakecraft INSTANCE;
 	public final Logger logger = LogManager.getLogger(NAMESPACE);
 	private final List<QuakecraftLogic> activeGames = new ArrayList<>();
-	private final List<ServerPlayerEntity> activePlayers = new ArrayList<>();
+	private final List<ServerPlayer> activePlayers = new ArrayList<>();
 
 	@Override
 	public void onInitialize() {
@@ -64,7 +64,7 @@ public class Quakecraft implements ModInitializer {
 
 		QuakecraftRegistry.init();
 
-		GameType.register(Identifier.of(NAMESPACE, "quakecraft"),
+		GameType.register(Identifier.fromNamespaceAndPath(NAMESPACE, "quakecraft"),
 				QuakecraftConfig.CODEC, QuakecraftWaiting::open);
 	}
 
@@ -77,15 +77,15 @@ public class Quakecraft implements ModInitializer {
 		this.logger.info("[" + NAMESPACE + "] " + info);
 	}
 
-	public void addActivePlayer(@NotNull ServerPlayerEntity player) {
+	public void addActivePlayer(@NotNull ServerPlayer player) {
 		this.activePlayers.add(player);
 	}
 
-	public void removeActivePlayer(@NotNull ServerPlayerEntity player) {
+	public void removeActivePlayer(@NotNull ServerPlayer player) {
 		this.activePlayers.remove(player);
 	}
 
-	public boolean isPlayerActive(@NotNull ServerPlayerEntity player) {
+	public boolean isPlayerActive(@NotNull ServerPlayer player) {
 		return this.activePlayers.contains(player);
 	}
 
@@ -106,7 +106,7 @@ public class Quakecraft implements ModInitializer {
 	}
 
 	public static Identifier id(@NotNull String name) {
-		return Identifier.of(NAMESPACE, name);
+		return Identifier.fromNamespaceAndPath(NAMESPACE, name);
 	}
 
 	/**
@@ -115,11 +115,11 @@ public class Quakecraft implements ModInitializer {
 	 * @param player the player
 	 * @since 1.1.0
 	 */
-	public static void applySpeed(ServerPlayerEntity player) {
-		var movementSpeedAttribute = player.getAttributes().getCustomInstance(EntityAttributes.MOVEMENT_SPEED);
+	public static void applySpeed(ServerPlayer player) {
+		var movementSpeedAttribute = player.getAttributes().getInstance(Attributes.MOVEMENT_SPEED);
 		if (movementSpeedAttribute != null) {
 			movementSpeedAttribute.removeModifier(QuakecraftConstants.PLAYER_MOVEMENT_SPEED_MODIFIER);
-			movementSpeedAttribute.addTemporaryModifier(QuakecraftConstants.PLAYER_MOVEMENT_SPEED_MODIFIER);
+			movementSpeedAttribute.addTransientModifier(QuakecraftConstants.PLAYER_MOVEMENT_SPEED_MODIFIER);
 		}
 	}
 
@@ -129,26 +129,26 @@ public class Quakecraft implements ModInitializer {
 	 * @param player the player
 	 * @since 1.1.0
 	 */
-	public static void removeSpeed(ServerPlayerEntity player) {
-		var movementSpeedAttribute = player.getAttributes().getCustomInstance(EntityAttributes.MOVEMENT_SPEED);
+	public static void removeSpeed(ServerPlayer player) {
+		var movementSpeedAttribute = player.getAttributes().getInstance(Attributes.MOVEMENT_SPEED);
 		if (movementSpeedAttribute != null) {
 			movementSpeedAttribute.removeModifier(QuakecraftConstants.PLAYER_MOVEMENT_SPEED_MODIFIER);
 		}
 	}
 
 	public static Direction getDirectionByName(@Nullable String name) {
-		return name == null ? null : Direction.byId(name.toLowerCase(Locale.ROOT));
+		return name == null ? null : Direction.byName(name.toLowerCase(Locale.ROOT));
 	}
 
-	public static void spawnFirework(ServerWorld world, double x, double y, double z, int[] colors, boolean silent, int lifetime) {
+	public static void spawnFirework(ServerLevel world, double x, double y, double z, int[] colors, boolean silent, int lifetime) {
 		var fireworkStack = new ItemStack(Items.FIREWORK_ROCKET);
 
-		fireworkStack.set(DataComponentTypes.FIREWORKS, new FireworksComponent(0, List.of(new FireworkExplosionComponent(FireworkExplosionComponent.Type.SMALL_BALL,
+		fireworkStack.set(DataComponents.FIREWORKS, new Fireworks(0, List.of(new FireworkExplosion(FireworkExplosion.Shape.SMALL_BALL,
 				IntList.of(colors), IntList.of(), false, false))));
 		var firework = new FireworkRocketEntity(world, x, y, z, fireworkStack);
 		firework.setSilent(silent);
 		if (lifetime >= 0)
-			((FireworkRocketEntityAccessor) firework).setLifeTime(lifetime);
-		world.spawnEntity(firework);
+			((FireworkRocketEntityAccessor) firework).setLifetime(lifetime);
+		world.addFreshEntity(firework);
 	}
 }

@@ -17,15 +17,15 @@
 
 package dev.lambdaurora.quakecraft.mixin;
 
-import net.minecraft.entity.projectile.FireworkRocketEntity;
+import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(FireworkRocketEntity.class)
 public interface FireworkRocketEntityAccessor {
-	@Accessor("lifeTime")
-	int getLifeTime();
+	@Accessor("lifetime")
+	int getLifetime();
 
-	@Accessor("lifeTime")
-	void setLifeTime(int lifeTime);
+	@Accessor("lifetime")
+	void setLifetime(int lifeTime);
 }

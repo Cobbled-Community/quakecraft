@@ -21,11 +21,11 @@ import dev.lambdaurora.quakecraft.block.LaunchPadBlock;
 import dev.lambdaurora.quakecraft.block.TeamBarrierBlock;
 import dev.lambdaurora.quakecraft.game.QuakecraftLogic;
 import dev.lambdaurora.quakecraft.game.environment.QuakecraftDoor;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.world.gen.chunk.ChunkGenerator;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.map_templates.BlockBounds;
 import xyz.nucleoid.map_templates.MapTemplate;
@@ -102,11 +102,11 @@ public class QuakecraftMap {
 		this.doors.forEach(QuakecraftDoor::tick);
 	}
 
-	public void init(ServerWorld world) {
+	public void init(ServerLevel world) {
 		this.initLaunchPads(world);
 	}
 
-	private void initLaunchPads(ServerWorld world) {
+	private void initLaunchPads(ServerLevel world) {
 		record LaunchPad(BlockBounds bounds, BlockState state) {
 		}
 
@@ -119,17 +119,17 @@ public class QuakecraftMap {
 				})
 				.filter(Objects::nonNull)
 				.forEach(region -> region.bounds()
-						.forEach(pos -> world.setBlockState(pos, region.state(),
-								Block.SKIP_DROPS | Block.FORCE_STATE | Block.REDRAW_ON_MAIN_THREAD | Block.NOTIFY_ALL)));
+						.forEach(pos -> world.setBlock(pos, region.state(),
+								Block.UPDATE_SUPPRESS_DROPS | Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_IMMEDIATE | Block.UPDATE_ALL)));
 	}
 
 	public void postInit(QuakecraftLogic game) {
 		this.template.getMetadata().getRegions("door").map(region -> QuakecraftDoor.fromRegion(game, region).orElse(null))
 				.filter(Objects::nonNull).forEach(this.doors::add);
 
-		if (game.getTeams().size() != 0) {
+		if (!game.getTeams().isEmpty()) {
 			this.template.getMetadata().getRegions("team_barrier").forEach(region -> {
-				GameTeam team = game.getTeam(region.getData().getString("team", ""));
+				GameTeam team = game.getTeam(region.getData().getStringOr("team", ""));
 
 				if (team != null) {
 					region.getBounds().forEach(pos -> TeamBarrierBlock.createAt(game.world(), pos, team));

@@ -18,9 +18,9 @@
 package dev.lambdaurora.quakecraft.mixin;
 
 import dev.lambdaurora.quakecraft.util.UsefulEntityShapeContext;
-import net.minecraft.block.EntityShapeContext;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.phys.shapes.EntityCollisionContext;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -28,12 +28,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(EntityShapeContext.class)
-public class EntityShapeContextMixin implements UsefulEntityShapeContext {
+@Mixin(EntityCollisionContext.class)
+public class EntityCollisionContextMixin implements UsefulEntityShapeContext {
 	@Unique
 	private Entity quakecraft$entity;
 
-	@Inject(method = "<init>(ZZDLnet/minecraft/item/ItemStack;ZLnet/minecraft/entity/Entity;)V", at = @At("RETURN"))
+	@Inject(method = "<init>(ZZDLnet/minecraft/world/item/ItemStack;ZLnet/minecraft/world/entity/Entity;)V", at = @At("RETURN"))
 	private void onInit(boolean bl, boolean bl2, double d, ItemStack itemStack, boolean bl3, Entity entity, CallbackInfo ci) {
 		this.quakecraft$entity = entity;
 	}

@@ -56,7 +56,7 @@ dependencies {
 	modImplementation libs.fabric.loader
 
 	// mappings libs.minecraft.mappings
-	mappings "net.fabricmc:yarn:1.21.11+build.4"
+	mappings loom.officialMojangMappings()
 	// Fabric API.
 	modImplementation libs.fabric.api
 
